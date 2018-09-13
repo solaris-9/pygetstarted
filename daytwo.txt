@@ -1,0 +1,854 @@
+Python 3.6.4 (v3.6.4:d48eceb, Dec 19 2017, 06:54:40) [MSC v.1900 64 bit (AMD64)] on win32
+Type "copyright", "credits" or "license()" for more information.
+>>> 
+ RESTART: C:\Users\matt\Dropbox\work\training\metasnake\2018-07-02-ora-begpy\markov.py 
+>>> dir()
+['Markov', '__annotations__', '__builtins__', '__doc__', '__file__', '__loader__', '__name__', '__package__', '__spec__', 'add', 'fetch_book', 'get_table', 'm', 'random', 'req']
+>>> m.predict('l')
+'d'
+>>> m.predict('l')
+'o'
+>>> m.predict('l')
+'o'
+>>> m.predict('l')
+'o'
+>>> m.predict('l')
+'l'
+>>> m.predict('l')
+'l'
+>>> m.predict('l')
+'o'
+>>> text = open('totc.txt', encoding='utf8').read()
+>>> len(text)
+792969
+>>> m2 = Markov(text)
+>>> m2.predict('A')
+' '
+>>> m2.table['A']
+{' ': 139, 'u': 5, 'R': 11, 'L': 7, 'n': 236, 'm': 19, 'l': 72, 's': 124, 'f': 33, '\n': 9, 'c': 13, 'r': 42, 't': 64, '-': 3, 'h': 23, 'y': 4, 'd': 6, 'b': 14, 'g': 19, 'C': 6, 'p': 6, 'v': 1, 'D': 3, '.': 2, 'w': 1, 'N': 10, 'S': 4, 'F': 1, 'I': 1, 'M': 3, 'G': 7, 'T': 4, 'V': 1, 'B': 2, 'P': 1, 'K': 1}
+>>> help()
+
+Welcome to Python 3.6's help utility!
+
+If this is your first time using Python, you should definitely check out
+the tutorial on the Internet at http://docs.python.org/3.6/tutorial/.
+
+Enter the name of any module, keyword, or topic to get help on writing
+Python programs and using Python modules.  To quit this help utility and
+return to the interpreter, just type "quit".
+
+To get a list of available modules, keywords, symbols, or topics, type
+"modules", "keywords", "symbols", or "topics".  Each module also comes
+with a one-line summary of what it does; to list the modules whose name
+or summary contain a given string such as "spam", type "modules spam".
+
+help> keywords
+
+Here is a list of the Python keywords.  Enter any keyword to get more help.
+
+False               def                 if                  raise
+None                del                 import              return
+True                elif                in                  try
+and                 else                is                  while
+as                  except              lambda              with
+assert              finally             nonlocal            yield
+break               for                 not                 
+class               from                or                  
+continue            global              pass                
+
+help> import
+The "import" statement
+**********************
+
+   import_stmt     ::= "import" module ["as" name] ( "," module ["as" name] )*
+                   | "from" relative_module "import" identifier ["as" name]
+                   ( "," identifier ["as" name] )*
+                   | "from" relative_module "import" "(" identifier ["as" name]
+                   ( "," identifier ["as" name] )* [","] ")"
+                   | "from" module "import" "*"
+   module          ::= (identifier ".")* identifier
+   relative_module ::= "."* module | "."+
+   name            ::= identifier
+
+The basic import statement (no "from" clause) is executed in two
+steps:
+
+1. find a module, loading and initializing it if necessary
+
+2. define a name or names in the local namespace for the scope
+   where the "import" statement occurs.
+
+When the statement contains multiple clauses (separated by commas) the
+two steps are carried out separately for each clause, just as though
+the clauses had been separated out into individual import statements.
+
+The details of the first step, finding and loading modules are
+described in greater detail in the section on the import system, which
+also describes the various types of packages and modules that can be
+imported, as well as all the hooks that can be used to customize the
+import system. Note that failures in this step may indicate either
+that the module could not be located, *or* that an error occurred
+while initializing the module, which includes execution of the
+module's code.
+
+If the requested module is retrieved successfully, it will be made
+available in the local namespace in one of three ways:
+
+* If the module name is followed by "as", then the name following
+  "as" is bound directly to the imported module.
+
+* If no other name is specified, and the module being imported is a
+  top level module, the module's name is bound in the local namespace
+  as a reference to the imported module
+
+* If the module being imported is *not* a top level module, then the
+  name of the top level package that contains the module is bound in
+  the local namespace as a reference to the top level package. The
+  imported module must be accessed using its full qualified name
+  rather than directly
+
+The "from" form uses a slightly more complex process:
+
+1. find the module specified in the "from" clause, loading and
+   initializing it if necessary;
+
+2. for each of the identifiers specified in the "import" clauses:
+
+   1. check if the imported module has an attribute by that name
+
+   2. if not, attempt to import a submodule with that name and then
+      check the imported module again for that attribute
+
+   3. if the attribute is not found, "ImportError" is raised.
+
+   4. otherwise, a reference to that value is stored in the local
+      namespace, using the name in the "as" clause if it is present,
+      otherwise using the attribute name
+
+Examples:
+
+   import foo                 # foo imported and bound locally
+   import foo.bar.baz         # foo.bar.baz imported, foo bound locally
+   import foo.bar.baz as fbb  # foo.bar.baz imported and bound as fbb
+   from foo.bar import baz    # foo.bar.baz imported and bound as baz
+   from foo import attr       # foo imported and foo.attr bound as attr
+
+If the list of identifiers is replaced by a star ("'*'"), all public
+names defined in the module are bound in the local namespace for the
+scope where the "import" statement occurs.
+
+The *public names* defined by a module are determined by checking the
+module's namespace for a variable named "__all__"; if defined, it must
+be a sequence of strings which are names defined or imported by that
+module.  The names given in "__all__" are all considered public and
+are required to exist.  If "__all__" is not defined, the set of public
+names includes all names found in the module's namespace which do not
+begin with an underscore character ("'_'").  "__all__" should contain
+the entire public API. It is intended to avoid accidentally exporting
+items that are not part of the API (such as library modules which were
+imported and used within the module).
+
+The wild card form of import --- "from module import *" --- is only
+allowed at the module level.  Attempting to use it in class or
+function definitions will raise a "SyntaxError".
+
+When specifying what module to import you do not have to specify the
+absolute name of the module. When a module or package is contained
+within another package it is possible to make a relative import within
+the same top package without having to mention the package name. By
+using leading dots in the specified module or package after "from" you
+can specify how high to traverse up the current package hierarchy
+without specifying exact names. One leading dot means the current
+package where the module making the import exists. Two dots means up
+one package level. Three dots is up two levels, etc. So if you execute
+"from . import mod" from a module in the "pkg" package then you will
+end up importing "pkg.mod". If you execute "from ..subpkg2 import mod"
+from within "pkg.subpkg1" you will import "pkg.subpkg2.mod". The
+specification for relative imports is contained within **PEP 328**.
+
+"importlib.import_module()" is provided to support applications that
+determine dynamically the modules to be loaded.
+
+
+Future statements
+=================
+
+A *future statement* is a directive to the compiler that a particular
+module should be compiled using syntax or semantics that will be
+available in a specified future release of Python where the feature
+becomes standard.
+
+The future statement is intended to ease migration to future versions
+of Python that introduce incompatible changes to the language.  It
+allows use of the new features on a per-module basis before the
+release in which the feature becomes standard.
+
+   future_statement ::= "from" "__future__" "import" feature ["as" name]
+                        ("," feature ["as" name])*
+                        | "from" "__future__" "import" "(" feature ["as" name]
+                        ("," feature ["as" name])* [","] ")"
+   feature          ::= identifier
+   name             ::= identifier
+
+A future statement must appear near the top of the module.  The only
+lines that can appear before a future statement are:
+
+* the module docstring (if any),
+
+* comments,
+
+* blank lines, and
+
+* other future statements.
+
+The features recognized by Python 3.0 are "absolute_import",
+"division", "generators", "unicode_literals", "print_function",
+"nested_scopes" and "with_statement".  They are all redundant because
+they are always enabled, and only kept for backwards compatibility.
+
+A future statement is recognized and treated specially at compile
+time: Changes to the semantics of core constructs are often
+implemented by generating different code.  It may even be the case
+that a new feature introduces new incompatible syntax (such as a new
+reserved word), in which case the compiler may need to parse the
+module differently.  Such decisions cannot be pushed off until
+runtime.
+
+For any given release, the compiler knows which feature names have
+been defined, and raises a compile-time error if a future statement
+contains a feature not known to it.
+
+The direct runtime semantics are the same as for any import statement:
+there is a standard module "__future__", described later, and it will
+be imported in the usual way at the time the future statement is
+executed.
+
+The interesting runtime semantics depend on the specific feature
+enabled by the future statement.
+
+Note that there is nothing special about the statement:
+
+   import __future__ [as name]
+
+That is not a future statement; it's an ordinary import statement with
+no special semantics or syntax restrictions.
+
+Code compiled by calls to the built-in functions "exec()" and
+"compile()" that occur in a module "M" containing a future statement
+will, by default, use the new syntax or semantics associated with the
+future statement.  This can be controlled by optional arguments to
+"compile()" --- see the documentation of that function for details.
+
+A future statement typed at an interactive interpreter prompt will
+take effect for the rest of the interpreter session.  If an
+interpreter is started with the "-i" option, is passed a script name
+to execute, and the script includes a future statement, it will be in
+effect in the interactive session started after the script is
+executed.
+
+See also:
+
+  **PEP 236** - Back to the __future__
+     The original proposal for the __future__ mechanism.
+
+Related help topics: MODULES
+
+help> 
+
+You are now leaving help and returning to the Python interpreter.
+If you want to ask for help on a particular object directly from the
+interpreter, you can type "help(object)".  Executing "help('string')"
+has the same effect as typing a particular string at the help> prompt.
+>>> 
+ RESTART: C:/Users/matt/Dropbox/work/training/metasnake/2018-07-02-ora-begpy/testmarkov.py 
+E
+======================================================================
+ERROR: test_markov (__main__.TestMarkov)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:/Users/matt/Dropbox/work/training/metasnake/2018-07-02-ora-begpy/testmarkov.py", line 6, in test_markov
+    m = Markov('ab')
+NameError: name 'Markov' is not defined
+
+----------------------------------------------------------------------
+Ran 1 test in 0.016s
+
+FAILED (errors=1)
+>>> 
+ RESTART: C:/Users/matt/Dropbox/work/training/metasnake/2018-07-02-ora-begpy/testmarkov.py 
+
+Warning (from warnings module):
+  File "C:/Users/matt/Dropbox/work/training/metasnake/2018-07-02-ora-begpy/testmarkov.py", line 10
+    self.assertEquals(res, 'b')
+DeprecationWarning: Please use assertEqual instead.
+.
+----------------------------------------------------------------------
+Ran 1 test in 0.379s
+
+OK
+>>> 
+ RESTART: C:/Users/matt/Dropbox/work/training/metasnake/2018-07-02-ora-begpy/testmarkov.py 
+.
+----------------------------------------------------------------------
+Ran 1 test in 0.016s
+
+OK
+>>> 
+ RESTART: C:/Users/matt/Dropbox/work/training/metasnake/2018-07-02-ora-begpy/testmarkov.py 
+..
+----------------------------------------------------------------------
+Ran 2 tests in 0.437s
+
+OK
+>>> import sys
+>>> sys.path
+['C:/Users/matt/Dropbox/work/training/metasnake/2018-07-02-ora-begpy', 'C:\\Users\\matt', 'C:\\Program Files\\Python36\\python36.zip', 'C:\\Program Files\\Python36\\DLLs', 'C:\\Program Files\\Python36\\lib', 'C:\\Program Files\\Python36', 'C:\\Users\\matt\\AppData\\Roaming\\Python\\Python36\\site-packages', 'C:\\Program Files\\Python36\\lib\\site-packages']
+>>> 
+ RESTART: C:/Users/matt/Dropbox/work/training/metasnake/2018-07-02-ora-begpy/testmarkov.py 
+.E.
+======================================================================
+ERROR: test_get_table2 (__main__.TestMarkov)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:/Users/matt/Dropbox/work/training/metasnake/2018-07-02-ora-begpy/testmarkov.py", line 17, in test_get_table2
+    res = markov.get_table('abc', size=2)
+TypeError: get_table() got an unexpected keyword argument 'size'
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.016s
+
+FAILED (errors=1)
+>>> file = 'resume.pdf'
+>>> file[0]
+'r'
+>>> file[-1]
+'f'
+>>> file[0:4]
+'resu'
+>>> file[1:6]
+'esume'
+>>> 
+ RESTART: C:/Users/matt/Dropbox/work/training/metasnake/2018-07-02-ora-begpy/testmarkov.py 
+...
+----------------------------------------------------------------------
+Ran 3 tests in 0.000s
+
+OK
+>>> 
+ RESTART: C:/Users/matt/Dropbox/work/training/metasnake/2018-07-02-ora-begpy/testmarkov.py 
+...E
+======================================================================
+ERROR: test_markov2 (__main__.TestMarkov)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:/Users/matt/Dropbox/work/training/metasnake/2018-07-02-ora-begpy/testmarkov.py", line 13, in test_markov2
+    m = markov.Markov('abc', size=2)
+TypeError: __init__() got an unexpected keyword argument 'size'
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.031s
+
+FAILED (errors=1)
+>>> 
+ RESTART: C:/Users/matt/Dropbox/work/training/metasnake/2018-07-02-ora-begpy/testmarkov.py 
+....
+----------------------------------------------------------------------
+Ran 4 tests in 0.329s
+
+OK
+>>> 
+ RESTART: C:\Users\matt\Dropbox\work\training\metasnake\2018-07-02-ora-begpy\markov.py 
+>>> 
+ RESTART: C:\Users\matt\Dropbox\work\training\metasnake\2018-07-02-ora-begpy\markov.py 
+Traceback (most recent call last):
+  File "C:\Users\matt\Dropbox\work\training\metasnake\2018-07-02-ora-begpy\markov.py", line 71, in <module>
+    m2 = Markov(open('totc', encoding='utf8').read(), size=4)
+FileNotFoundError: [Errno 2] No such file or directory: 'totc'
+>>> 
+ RESTART: C:\Users\matt\Dropbox\work\training\metasnake\2018-07-02-ora-begpy\markov.py 
+>>> dir()
+['Markov', '__annotations__', '__builtins__', '__doc__', '__file__', '__loader__', '__name__', '__package__', '__spec__', '__warningregistry__', 'add', 'fetch_book', 'get_table', 'm2', 'random', 'req']
+>>> m2.predict('A')
+' '
+>>> m2.predict('A ')
+'b'
+>>> m2.predict('A ')
+'t'
+>>> m2.predict('A ')
+'f'
+>>> m2.predict('A ')
+'b'
+>>> m2.predict('A f')
+'i'
+>>> m2.predict('A fi')
+'g'
+>>> m2.predict('A fig')
+Traceback (most recent call last):
+  File "<pyshell#29>", line 1, in <module>
+    m2.predict('A fig')
+  File "C:\Users\matt\Dropbox\work\training\metasnake\2018-07-02-ora-begpy\markov.py", line 37, in predict
+    table = self.tables[len(data_in) - 1]
+IndexError: list index out of range
+>>> m2.predict(' fig')
+'u'
+>>> m2.predict('figu')
+'r'
+>>> m2.predict('igur')
+'e'
+>>> m2.predict('gure')
+','
+>>> 
+ RESTART: C:/Users/matt/Dropbox/work/training/metasnake/2018-07-02-ora-begpy/testmarkov.py 
+..F..
+======================================================================
+FAIL: test_get_table_word (__main__.TestMarkov)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:/Users/matt/Dropbox/work/training/metasnake/2018-07-02-ora-begpy/testmarkov.py", line 29, in test_get_table_word
+    self.assertEqual(res, {'hello': {'world': 1}})
+AssertionError: {} != {'hello': {'world': 1}}
+- {}
++ {'hello': {'world': 1}}
+
+----------------------------------------------------------------------
+Ran 5 tests in 0.031s
+
+FAILED (failures=1)
+>>> 
+ RESTART: C:/Users/matt/Dropbox/work/training/metasnake/2018-07-02-ora-begpy/testmarkov.py 
+..> c:\users\matt\dropbox\work\training\metasnake\2018-07-02-ora-begpy\testmarkov.py(29)test_get_table_word()
+-> res = markov.get_table(['hello' 'world'])
+(Pdb) h
+
+Documented commands (type help <topic>):
+========================================
+EOF    c          d        h         list      q        rv       undisplay
+a      cl         debug    help      ll        quit     s        unt      
+alias  clear      disable  ignore    longlist  r        source   until    
+args   commands   display  interact  n         restart  step     up       
+b      condition  down     j         next      return   tbreak   w        
+break  cont       enable   jump      p         retval   u        whatis   
+bt     continue   exit     l         pp        run      unalias  where    
+
+Miscellaneous help topics:
+==========================
+exec  pdb
+
+(Pdb) help s
+s(tep)
+        Execute the current line, stop at the first possible occasion
+        (either in a function that is called or in the current
+        function).
+(Pdb) dir()
+['pdb', 'self']
+(Pdb) l
+ 24  	        res = markov.get_table('abc', size=2)
+ 25  	        self.assertEqual(res, {'ab': {'c': 1}})
+ 26  	
+ 27  	    def test_get_table_word(self):
+ 28  	        import pdb; pdb.set_trace()
+ 29  ->	        res = markov.get_table(['hello' 'world'])
+ 30  	        self.assertEqual(res, {'hello': {'world': 1}})
+ 31  	
+ 32  	
+ 33  	
+ 34  	if __name__ == '__main__':
+(Pdb) w
+  <string>(1)<module>()
+  c:\program files\python36\lib\idlelib\run.py(144)main()
+-> ret = method(*args, **kwargs)
+  c:\program files\python36\lib\idlelib\run.py(474)runcode()
+-> exec(code, self.locals)
+  c:\users\matt\dropbox\work\training\metasnake\2018-07-02-ora-begpy\testmarkov.py(35)<module>()
+-> unittest.main()
+  c:\program files\python36\lib\unittest\main.py(95)__init__()
+-> self.runTests()
+  c:\program files\python36\lib\unittest\main.py(256)runTests()
+-> self.result = testRunner.run(self.test)
+  c:\program files\python36\lib\unittest\runner.py(176)run()
+-> test(result)
+  c:\program files\python36\lib\unittest\suite.py(84)__call__()
+-> return self.run(*args, **kwds)
+  c:\program files\python36\lib\unittest\suite.py(122)run()
+-> test(result)
+  c:\program files\python36\lib\unittest\suite.py(84)__call__()
+-> return self.run(*args, **kwds)
+  c:\program files\python36\lib\unittest\suite.py(122)run()
+-> test(result)
+  c:\program files\python36\lib\unittest\case.py(653)__call__()
+-> return self.run(*args, **kwds)
+  c:\program files\python36\lib\unittest\case.py(605)run()
+-> testMethod()
+> c:\users\matt\dropbox\work\training\metasnake\2018-07-02-ora-begpy\testmarkov.py(29)test_get_table_word()
+-> res = markov.get_table(['hello' 'world'])
+(Pdb) u
+> c:\program files\python36\lib\unittest\case.py(605)run()
+-> testMethod()
+(Pdb) d
+> c:\users\matt\dropbox\work\training\metasnake\2018-07-02-ora-begpy\testmarkov.py(29)test_get_table_word()
+-> res = markov.get_table(['hello' 'world'])
+(Pdb) l
+ 24  	        res = markov.get_table('abc', size=2)
+ 25  	        self.assertEqual(res, {'ab': {'c': 1}})
+ 26  	
+ 27  	    def test_get_table_word(self):
+ 28  	        import pdb; pdb.set_trace()
+ 29  ->	        res = markov.get_table(['hello' 'world'])
+ 30  	        self.assertEqual(res, {'hello': {'world': 1}})
+ 31  	
+ 32  	
+ 33  	
+ 34  	if __name__ == '__main__':
+(Pdb) s
+--Call--
+> c:\users\matt\dropbox\work\training\metasnake\2018-07-02-ora-begpy\markov.py(52)get_table()
+-> def get_table(line, size=1):
+(Pdb) l
+ 47  	            for i in range(value):
+ 48  	                possible.append(key)
+ 49  	        return random.choice(possible)
+ 50  	
+ 51  	
+ 52  ->	def get_table(line, size=1):
+ 53  	    """This is a function, it is not a method of Markov"""
+ 54  	    results = {}
+ 55  	    for i in range(len(line)):
+ 56  	        chars = line[i:i+size]
+ 57  	        try:
+(Pdb) n
+> c:\users\matt\dropbox\work\training\metasnake\2018-07-02-ora-begpy\markov.py(54)get_table()
+-> results = {}
+(Pdb) dir()
+['line', 'size']
+(Pdb) n
+> c:\users\matt\dropbox\work\training\metasnake\2018-07-02-ora-begpy\markov.py(55)get_table()
+-> for i in range(len(line)):
+(Pdb) results
+{}
+(Pdb) dir()
+['line', 'results', 'size']
+(Pdb) l
+ 50  	
+ 51  	
+ 52  	def get_table(line, size=1):
+ 53  	    """This is a function, it is not a method of Markov"""
+ 54  	    results = {}
+ 55  ->	    for i in range(len(line)):
+ 56  	        chars = line[i:i+size]
+ 57  	        try:
+ 58  	            out = line[i+size]
+ 59  	        except IndexError:
+ 60  	            break
+(Pdb) n
+> c:\users\matt\dropbox\work\training\metasnake\2018-07-02-ora-begpy\markov.py(56)get_table()
+-> chars = line[i:i+size]
+(Pdb) n
+> c:\users\matt\dropbox\work\training\metasnake\2018-07-02-ora-begpy\markov.py(57)get_table()
+-> try:
+(Pdb) chars
+['helloworld']
+(Pdb) line
+['helloworld']
+(Pdb) u
+> c:\users\matt\dropbox\work\training\metasnake\2018-07-02-ora-begpy\testmarkov.py(29)test_get_table_word()
+-> res = markov.get_table(['hello' 'world'])
+(Pdb) q
+E..
+======================================================================
+ERROR: test_get_table_word (__main__.TestMarkov)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:/Users/matt/Dropbox/work/training/metasnake/2018-07-02-ora-begpy/testmarkov.py", line 29, in test_get_table_word
+    res = markov.get_table(['hello', 'world'])
+  File "C:/Users/matt/Dropbox/work/training/metasnake/2018-07-02-ora-begpy\markov.py", line 57, in get_table
+    try:
+  File "C:/Users/matt/Dropbox/work/training/metasnake/2018-07-02-ora-begpy\markov.py", line 57, in get_table
+    try:
+  File "C:\Program Files\Python36\lib\bdb.py", line 48, in trace_dispatch
+    return self.dispatch_line(frame)
+  File "C:\Program Files\Python36\lib\bdb.py", line 67, in dispatch_line
+    if self.quitting: raise BdbQuit
+bdb.BdbQuit
+
+----------------------------------------------------------------------
+Ran 5 tests in 196.636s
+
+FAILED (errors=1)
+>>> 
+ RESTART: C:/Users/matt/Dropbox/work/training/metasnake/2018-07-02-ora-begpy/testmarkov.py 
+..> c:\users\matt\dropbox\work\training\metasnake\2018-07-02-ora-begpy\testmarkov.py(29)test_get_table_word()
+-> res = markov.get_table(['hello', 'world'])
+(Pdb) c
+E..
+======================================================================
+ERROR: test_get_table_word (__main__.TestMarkov)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:/Users/matt/Dropbox/work/training/metasnake/2018-07-02-ora-begpy/testmarkov.py", line 29, in test_get_table_word
+    res = markov.get_table(['hello', 'world'])
+  File "C:/Users/matt/Dropbox/work/training/metasnake/2018-07-02-ora-begpy\markov.py", line 61, in get_table
+    char_dict = results.get(chars, {})
+TypeError: unhashable type: 'list'
+
+----------------------------------------------------------------------
+Ran 5 tests in 5.897s
+
+FAILED (errors=1)
+>>> names = []
+>>> id(names)
+2908569749512
+>>> names
+[]
+>>> names.append('matt')
+>>> names
+['matt']
+>>> id(names)
+2908569749512
+>>> names.append('paul')
+>>> names
+['matt', 'paul']
+>>> ' '.join(names)
+'matt paul'
+>>> 
+ RESTART: C:/Users/matt/Dropbox/work/training/metasnake/2018-07-02-ora-begpy/testmarkov.py 
+Traceback (most recent call last):
+  File "C:/Users/matt/Dropbox/work/training/metasnake/2018-07-02-ora-begpy/testmarkov.py", line 2, in <module>
+    import markov
+  File "C:/Users/matt/Dropbox/work/training/metasnake/2018-07-02-ora-begpy\markov.py", line 52
+    def get_table(line, size=1a):
+                              ^
+SyntaxError: invalid syntax
+>>> 
+ RESTART: C:/Users/matt/Dropbox/work/training/metasnake/2018-07-02-ora-begpy/testmarkov.py 
+..> c:\users\matt\dropbox\work\training\metasnake\2018-07-02-ora-begpy\testmarkov.py(29)test_get_table_word()
+-> res = markov.get_table(['hello', 'world'])
+(Pdb) c
+...
+----------------------------------------------------------------------
+Ran 5 tests in 3.599s
+
+OK
+>>> 
+ RESTART: C:/Users/matt/Dropbox/work/training/metasnake/2018-07-02-ora-begpy/testmarkov.py 
+.....
+----------------------------------------------------------------------
+Ran 5 tests in 0.062s
+
+OK
+>>> 
+ RESTART: C:/Users/matt/Dropbox/work/training/metasnake/2018-07-02-ora-begpy/testmarkov.py 
+.....E
+======================================================================
+ERROR: test_word_markov (__main__.TestMarkov)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:/Users/matt/Dropbox/work/training/metasnake/2018-07-02-ora-begpy/testmarkov.py", line 19, in test_word_markov
+    res = m.predict('hello')
+  File "C:/Users/matt/Dropbox/work/training/metasnake/2018-07-02-ora-begpy\markov.py", line 37, in predict
+    table = self.tables[len(data_in) - 1]
+IndexError: list index out of range
+
+----------------------------------------------------------------------
+Ran 6 tests in 0.099s
+
+FAILED (errors=1)
+>>> 
+ RESTART: C:/Users/matt/Dropbox/work/training/metasnake/2018-07-02-ora-begpy/testmarkov.py 
+......
+----------------------------------------------------------------------
+Ran 6 tests in 0.394s
+
+OK
+>>> 
+ RESTART: C:\Users\matt\Dropbox\work\training\metasnake\2018-07-02-ora-begpy\markov.py 
+>>> m2
+<__main__.WordMarkov object at 0x000001AEB388CA90>
+>>> m2.predict('A')
+'solemn'
+>>> m2.predict('A solemn')
+'consideration,'
+>>> m2.predict('A solemn')
+'consideration,'
+>>> m2.predict('A solemn')
+'consideration,'
+>>> m2.predict('A solemn')
+'consideration,'
+>>> m2.predict('A solemn consideration,')
+'when'
+>>> m2.predict('solemn consideration, when')
+'I'
+>>> m2.predict('when I')
+'believe'
+>>> m2.predict('when I')
+'gave'
+>>> m2.predict('when I')
+'was'
+>>> m2.predict('when I')
+'enter'
+>>> m2.predict('when I')
+'was'
+>>> m2.predict('when I')
+'am'
+>>> 
+ RESTART: C:\Users\matt\Dropbox\work\training\metasnake\2018-07-02-ora-begpy\markov.py 
+>>> m2.lorem('A', 10)
+Traceback (most recent call last):
+  File "<pyshell#57>", line 1, in <module>
+    m2.lorem('A', 10)
+  File "C:\Users\matt\Dropbox\work\training\metasnake\2018-07-02-ora-begpy\markov.py", line 59, in lorem
+    out = self.predict(''.join(res[-size:]))
+NameError: name 'size' is not defined
+>>> 
+ RESTART: C:\Users\matt\Dropbox\work\training\metasnake\2018-07-02-ora-begpy\markov.py 
+>>> m2.lorem('A', 10)
+Traceback (most recent call last):
+  File "<pyshell#58>", line 1, in <module>
+    m2.lorem('A', 10)
+  File "C:\Users\matt\Dropbox\work\training\metasnake\2018-07-02-ora-begpy\markov.py", line 59, in lorem
+    out = self.predict(''.join(res[-self.size:]))
+  File "C:\Users\matt\Dropbox\work\training\metasnake\2018-07-02-ora-begpy\markov.py", line 42, in predict
+    table = self._get_table(data_in)
+  File "C:\Users\matt\Dropbox\work\training\metasnake\2018-07-02-ora-begpy\markov.py", line 36, in _get_table
+    table = self.tables[len(data_in) - 1]
+IndexError: list index out of range
+>>> 
+ RESTART: C:\Users\matt\Dropbox\work\training\metasnake\2018-07-02-ora-begpy\markov.py 
+>>> m2.lorem('A', 10)
+data in: A
+data in: Asolemn
+Traceback (most recent call last):
+  File "<pyshell#59>", line 1, in <module>
+    m2.lorem('A', 10)
+  File "C:\Users\matt\Dropbox\work\training\metasnake\2018-07-02-ora-begpy\markov.py", line 60, in lorem
+    out = self.predict(''.join(res[-self.size:]))
+  File "C:\Users\matt\Dropbox\work\training\metasnake\2018-07-02-ora-begpy\markov.py", line 43, in predict
+    table = self._get_table(data_in)
+  File "C:\Users\matt\Dropbox\work\training\metasnake\2018-07-02-ora-begpy\markov.py", line 37, in _get_table
+    table = self.tables[len(data_in) - 1]
+IndexError: list index out of range
+>>> m2.predict('A')
+data in: A
+'Tale'
+>>> 
+ RESTART: C:\Users\matt\Dropbox\work\training\metasnake\2018-07-02-ora-begpy\markov.py 
+>>> m2.predict('A')
+data in: A
+'N'
+>>> m2.predict('A')
+data in: A
+'t'
+>>> m2.predict('A')
+data in: A
+'n'
+>>> m2.lorem('A', 10)
+data in: A
+data in: An
+data in: Ant
+data in: Anto
+data in: ntoi
+data in: toin
+data in: oine
+data in: ine 
+data in: ne t
+data in: e th
+'Antoine the'
+>>> 
+ RESTART: C:\Users\matt\Dropbox\work\training\metasnake\2018-07-02-ora-begpy\markov.py 
+>>> m2.lorem('A', 10)
+Traceback (most recent call last):
+  File "<pyshell#65>", line 1, in <module>
+    m2.lorem('A', 10)
+  File "C:\Users\matt\Dropbox\work\training\metasnake\2018-07-02-ora-begpy\markov.py", line 60, in lorem
+    out = self.predict(''.join(res[-self.size:]))
+  File "C:\Users\matt\Dropbox\work\training\metasnake\2018-07-02-ora-begpy\markov.py", line 44, in predict
+    options = table.get(data_in, {})
+AttributeError: 'NoneType' object has no attribute 'get'
+>>> 
+ RESTART: C:\Users\matt\Dropbox\work\training\metasnake\2018-07-02-ora-begpy\markov.py 
+>>> m2.lorem('A', 10)
+Missing table :Alittle
+Traceback (most recent call last):
+  File "<pyshell#66>", line 1, in <module>
+    m2.lorem('A', 10)
+  File "C:\Users\matt\Dropbox\work\training\metasnake\2018-07-02-ora-begpy\markov.py", line 60, in lorem
+    out = self.predict(''.join(res[-self.size:]))
+  File "C:\Users\matt\Dropbox\work\training\metasnake\2018-07-02-ora-begpy\markov.py", line 44, in predict
+    options = table.get(data_in, {})
+AttributeError: 'NoneType' object has no attribute 'get'
+>>> 
+ RESTART: C:\Users\matt\Dropbox\work\training\metasnake\2018-07-02-ora-begpy\markov.py 
+>>> m2.lorem('A', 10)
+'A face habitually suppressed and quieted, was still lighted up under'
+>>> m2.lorem('A', 10)
+'A shiver ran through her frame, and from it through his.'
+>>> m2.lorem('A', 100)
+"A strong card--a certain Guillotine card! Do you play?” “No!” returned the spy. “I throw up. I confess that we were so unpopular with the outrageous mob, that I only got away from England at the risk of being ducked to death, and that Cly was so ferreted up and down, that he never would have got away at all but for that sham. Though how this man knows it was a sham, is a wonder of wonders to me.” “Never you trouble your head about this man,” retorted the contentious Mr. Cruncher; “you'll have trouble enough with giving your attention"
+>>> 
+ RESTART: C:\Users\matt\Dropbox\work\training\metasnake\2018-07-02-ora-begpy\markov.py 
+>>> m2
+<__main__.WordMarkov object at 0x000001A4AC6A65C0>
+>>> repl(m2)
+>A
+rose
+>A rose
+lay
+>A rose lay
+beside
+>foo
+Missing table :foo
+Traceback (most recent call last):
+  File "<pyshell#71>", line 1, in <module>
+    repl(m2)
+  File "C:\Users\matt\Dropbox\work\training\metasnake\2018-07-02-ora-begpy\markov.py", line 103, in repl
+    res = m.predict(txt)
+  File "C:\Users\matt\Dropbox\work\training\metasnake\2018-07-02-ora-begpy\markov.py", line 47, in predict
+    options = table.get(data_in, {})
+AttributeError: 'NoneType' object has no attribute 'get'
+>>> 
+ RESTART: C:\Users\matt\Dropbox\work\training\metasnake\2018-07-02-ora-begpy\markov.py 
+>>> repl(m2)
+>foo
+Missing table :foo
+Try again!
+Traceback (most recent call last):
+  File "<pyshell#72>", line 1, in <module>
+    repl(m2)
+  File "C:\Users\matt\Dropbox\work\training\metasnake\2018-07-02-ora-begpy\markov.py", line 107, in repl
+    print(res)
+UnboundLocalError: local variable 'res' referenced before assignment
+>>> 
+ RESTART: C:\Users\matt\Dropbox\work\training\metasnake\2018-07-02-ora-begpy\markov.py 
+>>> repl(m2)
+>foo
+Missing table :foo
+Try again!
+>The
+trees
+>The trees
+environing
+>The trees
+and
+>The trees
+and
+>The trees
+environing
+>The trees
+and
+>
+Traceback (most recent call last):
+  File "<pyshell#73>", line 1, in <module>
+    repl(m2)
+  File "C:\Users\matt\Dropbox\work\training\metasnake\2018-07-02-ora-begpy\markov.py", line 102, in repl
+    txt = input('>')
+EOFError: EOF when reading a line
+>>> 
+ RESTART: C:\Users\matt\Dropbox\work\training\metasnake\2018-07-02-ora-begpy\markov.py 
+>>> repl(m2)
+>foo
+Missing table :foo
+Try again!
+>The
+forlorn
+>
+goodbye!
+>>> 
